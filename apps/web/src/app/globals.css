@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+html,
+body {
+  background: #f3f5f7;
+  color: #0f172a;
+  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+}
+h1,
+h2,
+h3,
+.serif {
+  font-family: "Sora", "Segoe UI", sans-serif;
+}
+a {
+  color: inherit;
+}

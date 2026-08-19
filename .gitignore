@@ -1,0 +1,72 @@
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+!**/.env.example
+*.pem
+*.p12
+credentials.json
+secrets/
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+dist/
+build/
+
+# Node
+node_modules/
+.next/
+out/
+.turbo/
+coverage/
+*.tsbuildinfo
+
+# Docker / local data
+data/
+postgres-data/
+redis-data/
+minio-data/
+localstack-data/
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Helm
+charts/*.tgz
+
+# IDE / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Uploaded / generated media (never commit private images)
+quarantine/
+published-media/
+tmp-media/
+
+# Test artifacts
+playwright-report/
+test-results/
+k6-results/
+
+# Logs
+*.log
