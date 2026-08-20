@@ -25,7 +25,7 @@ async def lifespan(_app: FastAPI):
 
 app = FastAPI(
     title="FindShare API",
-    description="Invitation-only social product-discovery platform (Phase 1 local foundation).",
+    description="Social product-discovery platform (Phase 1 local foundation). Registration is open by default.",
     version="0.1.0",
     lifespan=lifespan,
 )

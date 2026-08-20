@@ -30,17 +30,17 @@ export default function ReviewPage() {
       .then(setReview)
       .catch((err) => setError(err.message));
   }, [id]);
-  if (error) return <p className="text-red-700">{error}</p>;
-  if (!review) return <p>Loading…</p>;
+  if (error) return <p className="text-red-400">{error}</p>;
+  if (!review) return <p className="muted">Loading…</p>;
   const mine = user?.id === review.author.id;
   return (
     <article className="space-y-4">
-      <p className="text-xs uppercase text-orange-700">
+      <p className="feed-kicker">
         {review.state} · {review.review_kind} · {review.overall_rating}/5
       </p>
-      <h1 className="serif text-4xl">{review.title}</h1>
+      <h1 className="text-4xl font-bold">{review.title}</h1>
       <p>
-        <Link href={`/products/${review.product.id}`} className="underline">
+        <Link href={`/products/${review.product.id}`}>
           {review.product.brand_name} {review.product.name}
         </Link>{" "}
         · @{review.author.username}
@@ -48,18 +48,18 @@ export default function ReviewPage() {
       {mine && review.state !== "published" ? (
         <button
           type="button"
-          className="underline"
+          className="btn"
           onClick={async () => {
             setReview(await api<Review>(`/api/v1/reviews/${id}/publish`, { method: "POST" }));
           }}
         >
-          Publish (local shortcut)
+          Publish
         </button>
       ) : null}
       {mine ? (
         <button
           type="button"
-          className="ml-3 underline"
+          className="text-sm text-red-400 underline"
           onClick={async () => {
             await api(`/api/v1/reviews/${id}`, { method: "DELETE" });
             router.push("/");
@@ -69,7 +69,7 @@ export default function ReviewPage() {
         </button>
       ) : null}
       <p className="whitespace-pre-wrap leading-relaxed">{review.body}</p>
-      {review.product.category.requires_health_notice ? <p className="rounded-xl bg-orange-50 p-4 text-sm">{NOTICES.health}</p> : null}
+      {review.product.category.requires_health_notice ? <p className="notice">{NOTICES.health}</p> : null}
     </article>
   );
 }

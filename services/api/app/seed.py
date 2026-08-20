@@ -90,24 +90,23 @@ def seed(db: Session | None = None) -> None:
     try:
         config = db.get(BetaConfiguration, 1)
         if config is None:
-            config = BetaConfiguration(
-                id=1,
-                registration_mode=settings.registration_mode,
-                maximum_active_users=settings.maximum_active_users,
-                reviews_per_user=settings.reviews_per_user,
-                images_per_review=settings.images_per_review,
-                maximum_image_size_mb=settings.maximum_image_size_mb,
-                registration_enabled=settings.registration_enabled,
-                image_uploads_enabled=settings.image_uploads_enabled,
-                comments_enabled=settings.comments_enabled,
-                price_submissions_enabled=settings.price_submissions_enabled,
-                public_collections_enabled=settings.public_collections_enabled,
-                placeholder_ads_enabled=settings.placeholder_ads_enabled,
-                live_advertising_enabled=settings.live_advertising_enabled,
-                advertising_provider=settings.advertising_provider,
-                maintenance_mode=settings.maintenance_mode,
-            )
+            config = BetaConfiguration(id=1)
             db.add(config)
+            db.flush()
+        config.registration_mode = settings.registration_mode
+        config.maximum_active_users = settings.maximum_active_users
+        config.reviews_per_user = settings.reviews_per_user
+        config.images_per_review = settings.images_per_review
+        config.maximum_image_size_mb = settings.maximum_image_size_mb
+        config.registration_enabled = settings.registration_enabled
+        config.image_uploads_enabled = settings.image_uploads_enabled
+        config.comments_enabled = settings.comments_enabled
+        config.price_submissions_enabled = settings.price_submissions_enabled
+        config.public_collections_enabled = settings.public_collections_enabled
+        config.placeholder_ads_enabled = settings.placeholder_ads_enabled
+        config.live_advertising_enabled = settings.live_advertising_enabled
+        config.advertising_provider = settings.advertising_provider
+        config.maintenance_mode = settings.maintenance_mode
 
         admin = _user(
             db,

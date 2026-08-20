@@ -25,21 +25,21 @@ export default function ProductDetailPage() {
     api<Product>(`/api/v1/products/${id}`).then(setProduct);
     api<{ items: ReviewItem[] }>(`/api/v1/reviews?product_id=${id}`).then((body) => setReviews(body.items));
   }, [id]);
-  if (!product) return <p>Loading…</p>;
+  if (!product) return <p className="muted">Loading…</p>;
   return (
     <article className="space-y-6">
-      <p className="text-xs uppercase text-orange-700">
+      <p className="feed-kicker">
         {product.category.name} · {product.brand_name}
       </p>
-      <h1 className="serif text-4xl">{product.name}</h1>
-      <p className="text-slate-600">{product.description}</p>
-      <Link href={`/reviews/new?product=${product.id}`} className="underline">
+      <h1 className="text-4xl font-bold">{product.name}</h1>
+      <p className="muted">{product.description}</p>
+      <Link href={`/reviews/new?product=${product.id}`} className="btn inline-block">
         Write a review
       </Link>
-      {product.category.requires_health_notice ? <p className="rounded-xl bg-orange-50 p-4 text-sm">{NOTICES.health}</p> : null}
-      <div className="grid gap-4 sm:grid-cols-2">
+      {product.category.requires_health_notice ? <p className="notice">{NOTICES.health}</p> : null}
+      <div className="space-y-3">
         {reviews.map((review) => (
-          <ReviewCard key={review.id} review={review} />
+          <ReviewCard key={review.id} review={review} variant="compact" />
         ))}
       </div>
     </article>

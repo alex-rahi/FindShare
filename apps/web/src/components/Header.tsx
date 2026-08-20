@@ -36,7 +36,7 @@ export function Header() {
                 Sign in
               </Link>
               <Link href="/register" className="rounded-full bg-teal-700 px-3 py-1 text-white">
-                Request access
+                Join
               </Link>
             </>
           ) : null}

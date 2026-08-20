@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ApiError } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
@@ -23,26 +24,24 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="mx-auto max-w-md space-y-6">
-      <h1 className="serif text-3xl">Sign in</h1>
-      <form onSubmit={onSubmit} className="space-y-4 rounded-2xl border border-slate-200 bg-white p-6">
-        {error ? <p className="text-sm text-red-700">{error}</p> : null}
+    <div className="space-y-6">
+      <h1 className="text-3xl font-bold">Sign in</h1>
+      <form onSubmit={onSubmit} className="panel">
+        {error ? <p className="text-sm text-red-400">{error}</p> : null}
         <input
           value={ident}
           onChange={(e) => setIdent(e.target.value)}
           placeholder="Email or username"
-          className="w-full rounded-lg border border-slate-200 px-3 py-2"
+          className="field"
         />
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full rounded-lg border border-slate-200 px-3 py-2"
-        />
-        <button type="submit" className="w-full rounded-full bg-teal-700 py-2 text-white">
+        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="field" />
+        <button type="submit" className="btn">
           Sign in
         </button>
       </form>
+      <p className="muted">
+        New here? <Link href="/register">Create an account</Link>
+      </p>
     </div>
   );
 }

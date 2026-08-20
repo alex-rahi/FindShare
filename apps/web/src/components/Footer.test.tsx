@@ -31,6 +31,6 @@ describe("ReviewCard", () => {
       />,
     );
     expect(screen.getByText("Quiet enough for a noisy office")).toBeInTheDocument();
-    expect(screen.getByRole("link")).toHaveAttribute("href", "/reviews/r1");
+    expect(screen.getAllByRole("link")[0]).toHaveAttribute("href", "/reviews/r1");
   });
 });

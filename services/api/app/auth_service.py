@@ -115,7 +115,7 @@ def register_user(db: Session, *, email: str, username: str, password: str, invi
     else:
         invite = None
 
-    if count_active_users(db) >= beta.maximum_active_users:
+    if beta.registration_mode == "invite_only" and count_active_users(db) >= beta.maximum_active_users:
         raise AppError("BETA_FULL", "This invitation-only beta is at capacity.", 403)
 
     if db.scalar(select(User).where(User.email == email_norm)):

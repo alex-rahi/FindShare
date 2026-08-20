@@ -12,14 +12,14 @@ export default function VerifyPage() {
     setDone(true);
   }
   return (
-    <div className="mx-auto max-w-md space-y-4">
-      <h1 className="serif text-3xl">Verify email</h1>
+    <div className="space-y-4">
+      <h1 className="text-3xl font-bold">Verify email</h1>
       {done ? (
         <p>Email verified.</p>
       ) : (
-        <form onSubmit={onSubmit} className="space-y-3 rounded-2xl border bg-white p-6">
-          <input required value={token} onChange={(e) => setToken(e.target.value)} placeholder="Token" className="w-full rounded-lg border px-3 py-2" />
-          <button type="submit" className="w-full rounded-full bg-teal-700 py-2 text-white">
+        <form onSubmit={onSubmit} className="panel">
+          <input required value={token} onChange={(e) => setToken(e.target.value)} placeholder="Token" className="field" />
+          <button type="submit" className="btn">
             Verify
           </button>
         </form>

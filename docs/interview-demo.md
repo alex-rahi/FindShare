@@ -4,13 +4,13 @@
 
 Accurate summary:
 
-> FindShare is an invitation-only social product-discovery platform where users share reviews, ratings, recommendations, images, prices, and shopping information across consumer-product categories. It includes secure media uploads, AI-assisted moderation, human review, and production-style AWS infrastructure managed with Terraform, EKS, Helm, and GitHub Actions.
+> FindShare is a social product-discovery platform where users share reviews, ratings, recommendations, images, prices, and shopping information across consumer-product categories. It includes secure media uploads, AI-assisted moderation, human review, and production-style AWS infrastructure managed with Terraform, EKS, Helm, and GitHub Actions.
 
 ## Phase 1 script (local)
 
 1. Product concept and this architecture (1 min)
 2. `docker compose up` — web + API + PostgreSQL + Redis (1 min)
-3. Invitation-only registration with `FINDSHARE-DEV-INVITE` (1 min)
+3. Open registration (no invite code) (1 min)
 4. Sign in as `demo_reviewer` (30 s)
 5. Browse data-driven categories and the seeded feed (1 min)
 6. Open a product; note user-content and (if food/fitness/beauty) health notices (1 min)

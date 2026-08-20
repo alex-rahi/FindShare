@@ -14,7 +14,7 @@
 
 ## Product summary
 
-FindShare is an invitation-only social product-discovery platform where users share reviews, ratings, recommendations, images, prices, and shopping information across consumer-product categories. It includes secure media uploads, AI-assisted moderation, human review, and production-style AWS infrastructure managed with Terraform, EKS, Helm, and GitHub Actions.
+FindShare is a social product-discovery platform where users share reviews, ratings, recommendations, images, prices, and shopping information across consumer-product categories. It includes secure media uploads, AI-assisted moderation, human review, and production-style AWS infrastructure managed with Terraform, EKS, Helm, and GitHub Actions. Phase 1 registration is open; invitation-only mode remains available via config.
 
 ## Current repository inspection
 
@@ -33,7 +33,7 @@ No prior FindShare application code existed. Phase 1 builds the local foundation
 | Local JWT authentication | 1 | Implemented |
 | Profiles, categories, products, text reviews, ratings | 1 | Implemented |
 | Basic feed and search | 1 | Implemented |
-| Invitation-only registration + max active users | 1 | Implemented (private-dev defaults) |
+| Open registration (invite-only + cap still configurable) | 1 | Implemented |
 | Unit and API tests | 1 | Tested (24 pytest on host SQLite; 2 vitest). Compose `up` not verified in this session. |
 | Brands, retailers, user-submitted prices | 2 | Deferred |
 | Likes, helpful votes, comments, follows, collections, reports | 2 | Deferred |
@@ -55,7 +55,7 @@ No prior FindShare application code existed. Phase 1 builds the local foundation
 
 1. `docker compose up --build` starts web, API, PostgreSQL, and Redis with health checks.
 2. Alembic migrations apply on API start. Seed creates admin, moderator, and labeled demo data.
-3. Registration requires a valid invitation code when `registration_mode=invite_only`.
+3. Registration is open by default. A valid invitation code is required only when `registration_mode=invite_only`.
 4. Sign-in issues a JWT; identity and role are loaded from the database, never from client-supplied role fields.
 5. Users can view/update their own profile and cannot update another user's profile.
 6. Categories are served from the database, not hardcoded in frontend components.

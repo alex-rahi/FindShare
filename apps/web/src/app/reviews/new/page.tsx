@@ -44,10 +44,10 @@ function Form() {
 
   return (
     <div className="space-y-4">
-      <h1 className="serif text-3xl">Write a review</h1>
-      <form onSubmit={onSubmit} className="space-y-3 rounded-2xl border bg-white p-6">
-        {error ? <p className="text-sm text-red-700">{error}</p> : null}
-        <select required value={productId} onChange={(e) => setProductId(e.target.value)} className="w-full rounded-lg border px-3 py-2">
+      <h1 className="text-3xl font-bold">Post</h1>
+      <form onSubmit={onSubmit} className="panel">
+        {error ? <p className="text-sm text-red-400">{error}</p> : null}
+        <select required value={productId} onChange={(e) => setProductId(e.target.value)} className="field">
           <option value="">Select product</option>
           {products.map((p) => (
             <option key={p.id} value={p.id}>
@@ -55,16 +55,16 @@ function Form() {
             </option>
           ))}
         </select>
-        <input required value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title" className="w-full rounded-lg border px-3 py-2" />
-        <textarea required value={body} onChange={(e) => setBody(e.target.value)} rows={6} className="w-full rounded-lg border px-3 py-2" />
-        <select value={rating} onChange={(e) => setRating(e.target.value)} className="rounded-lg border px-3 py-2">
+        <input required value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title" className="field" />
+        <textarea required value={body} onChange={(e) => setBody(e.target.value)} rows={6} className="field" />
+        <select value={rating} onChange={(e) => setRating(e.target.value)} className="field">
           {[1, 2, 3, 4, 5].map((n) => (
             <option key={n} value={n}>
               {n} stars
             </option>
           ))}
         </select>
-        <button type="submit" className="rounded-full bg-teal-700 px-4 py-2 text-white">
+        <button type="submit" className="btn">
           Save draft
         </button>
       </form>
@@ -74,7 +74,7 @@ function Form() {
 
 export default function NewReviewPage() {
   return (
-    <Suspense fallback={<p>Loading…</p>}>
+    <Suspense fallback={<p className="muted">Loading…</p>}>
       <Form />
     </Suspense>
   );

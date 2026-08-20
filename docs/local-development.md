@@ -31,7 +31,7 @@ Demonstration data only. Change passwords before any shared environment.
 - Admin: `admin` / `FindShareAdmin!dev`
 - Moderator: `moderator` / `FindShareMod!dev`
 - Demo reviewer: `demo_reviewer` / `FindShareDemo!dev`
-- Invite code: `FINDSHARE-DEV-INVITE`
+Registration is open. An invitation code is seeded for `REGISTRATION_MODE=invite_only` only.
 
 Email verification tokens for newly registered users are printed by the API process in `APP_ENV=local` only.
 

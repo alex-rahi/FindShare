@@ -1,8 +1,8 @@
 # FindShare
 
-FindShare is an invitation-only social product-discovery platform where users share reviews, ratings, recommendations, images, prices, and shopping information across consumer-product categories. It includes secure media uploads, AI-assisted moderation, human review, and production-style AWS infrastructure managed with Terraform, EKS, Helm, and GitHub Actions.
+FindShare is a social product-discovery platform where users share reviews, ratings, recommendations, images, prices, and shopping information across consumer-product categories. It includes secure media uploads, AI-assisted moderation, human review, and production-style AWS infrastructure managed with Terraform, EKS, Helm, and GitHub Actions.
 
-**Current implementation status:** Phase 1 (local foundation) code and host tests exist. Later phases are documented, not implemented. See [docs/implementation-plan.md](docs/implementation-plan.md). `docker compose up` was not verified in the latest session.
+**Current implementation status:** Phase 1 (local foundation) with an open GymTok-style review feed. Later phases are documented, not implemented. See [docs/implementation-plan.md](docs/implementation-plan.md).
 
 | Claim | Status |
 | --- | --- |
@@ -14,7 +14,7 @@ FindShare is an invitation-only social product-discovery platform where users sh
 
 ## Stage 1: private development
 
-Only the developer (and seeded demo accounts) can access the app. Registration is invitation-only. Image uploads, comments, live ads, and public collections are disabled.
+Open registration. Image uploads, comments, live ads, and public collections are still disabled in Phase 1.
 
 ```bash
 cp .env.example .env
@@ -34,7 +34,7 @@ Seeded local accounts (development only, labeled demonstration data):
 | moderator | `moderator` | `moderator@findshare.local` | `FindShareMod!dev` |
 | demo reviewer | `demo_reviewer` | `demo.reviewer@findshare.local` | `FindShareDemo!dev` |
 
-Invitation code for additional local users: `FINDSHARE-DEV-INVITE`
+Invitation codes are optional and unused in open registration.
 
 ## Notices
 

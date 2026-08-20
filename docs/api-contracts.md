@@ -34,7 +34,7 @@ Error shape:
 | POST | `/api/v1/auth/password-reset/confirm` | No | token, new_password |
 | GET | `/api/v1/auth/me` | Yes | — |
 
-Register is invite-only by default. When `maximum_active_users` is reached, the API returns `BETA_FULL`.
+Register is open by default (`REGISTRATION_MODE=open`). Invitation codes are required only when `registration_mode=invite_only`. In that mode, reaching `maximum_active_users` returns `BETA_FULL`.
 
 Email verification and password-reset tokens are stored in Redis and **logged in local development only** (never emailed in Phase 1). Tokens are not written to application logs in any other environment.
 

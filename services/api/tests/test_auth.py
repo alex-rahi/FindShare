@@ -14,23 +14,22 @@ def test_login_seeded_admin(client):
     assert response.json()["tokens"]["access_token"]
 
 
-def test_register_requires_invite(client):
+def test_register_open_without_invite(client):
     response = client.post(
         "/api/v1/auth/register",
         json={"email": "new@example.com", "username": "newshopper", "password": "TestUser1!ok"},
     )
-    assert response.status_code == 403
-    assert response.json()["code"] == "INVITE_REQUIRED"
+    assert response.status_code == 201, response.text
+    assert response.json()["user"]["role"] == "user"
 
 
-def test_register_with_invite_and_ignore_role(client):
+def test_register_ignores_client_supplied_role(client):
     response = client.post(
         "/api/v1/auth/register",
         json={
             "email": "invited@example.com",
             "username": "invited",
             "password": "TestUser1!ok",
-            "invitation_code": "FINDSHARE-DEV-INVITE",
             "role": "admin",
         },
     )
@@ -41,14 +40,20 @@ def test_register_with_invite_and_ignore_role(client):
     assert verified.status_code == 204
 
 
-def test_beta_full(client, db_session):
-
+def test_invite_only_enforced_when_configured(client, db_session):
     from app.models.platform import BetaConfiguration
 
     config = db_session.get(BetaConfiguration, 1)
+    config.registration_mode = "invite_only"
     config.maximum_active_users = 3
     db_session.commit()
-    response = client.post(
+    missing = client.post(
+        "/api/v1/auth/register",
+        json={"email": "needs-invite@example.com", "username": "needsinvite", "password": "TestUser1!ok"},
+    )
+    assert missing.status_code == 403
+    assert missing.json()["code"] == "INVITE_REQUIRED"
+    overflow = client.post(
         "/api/v1/auth/register",
         json={
             "email": "overflow@example.com",
@@ -57,8 +62,8 @@ def test_beta_full(client, db_session):
             "invitation_code": "FINDSHARE-DEV-INVITE",
         },
     )
-    assert response.status_code == 403
-    assert response.json()["code"] == "BETA_FULL"
+    assert overflow.status_code == 403
+    assert overflow.json()["code"] == "BETA_FULL"
 
 
 def test_invalid_login(client):
@@ -69,10 +74,10 @@ def test_invalid_login(client):
     assert response.status_code == 401
 
 
-def test_beta_status_invite_only(client):
+def test_beta_status_is_open(client):
     data = client.get("/api/v1/beta/status").json()
-    assert data["registration_mode"] == "invite_only"
-    assert data["maximum_active_users"] == 10
+    assert data["registration_mode"] == "open"
+    assert data["registration_enabled"] is True
 
 
 def test_account_deletion_hides_identity(client):
@@ -82,7 +87,6 @@ def test_account_deletion_hides_identity(client):
             "email": "gone-user@example.com",
             "username": "gone_user",
             "password": "ValidPass!123",
-            "invitation_code": "FINDSHARE-DEV-INVITE",
         },
     )
     assert registered.status_code == 201, registered.text

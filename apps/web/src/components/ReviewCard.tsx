@@ -10,21 +10,57 @@ export type ReviewItem = {
   product: { name: string; brand_name: string; category: { name: string } };
 };
 
-export function ReviewCard({ review }: { review: ReviewItem }) {
+export function ReviewCard({
+  review,
+  variant = "feed",
+}: {
+  review: ReviewItem;
+  variant?: "feed" | "compact";
+}) {
+  const initial = review.author.username.slice(0, 1).toUpperCase();
+
+  if (variant === "compact") {
+    return (
+      <Link href={`/reviews/${review.id}`} className="compact-card">
+        <p className="feed-kicker">
+          {review.product.category.name} · {review.product.brand_name}
+        </p>
+        <h2>{review.title}</h2>
+        <p className="muted">
+          {review.overall_rating}/5 · @{review.author.username}
+        </p>
+      </Link>
+    );
+  }
+
   return (
-    <Link href={`/reviews/${review.id}`} className="block rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-      <p className="text-xs uppercase tracking-wide text-orange-700">
-        {review.product.category.name} · {review.product.brand_name}
-      </p>
-      <h2 className="serif mt-1 text-xl">{review.title}</h2>
-      <p className="text-sm text-orange-700" aria-label={`${review.overall_rating} out of 5`}>
-        {"★".repeat(review.overall_rating)}
-        {"☆".repeat(5 - review.overall_rating)}
-      </p>
-      <p className="mt-2 line-clamp-2 text-sm text-slate-600">{review.body}</p>
-      <p className="mt-2 text-xs text-slate-500">
-        {review.product.name} · @{review.author.username}
-      </p>
-    </Link>
+    <article className="feed-card">
+      <div className="feed-stage" aria-hidden>
+        <p>{review.product.brand_name}</p>
+        <p className="feed-stage-name">{review.product.name}</p>
+      </div>
+      <div className="feed-gradient" />
+      <div className="feed-caption">
+        <p className="feed-kicker">
+          {review.product.category.name} · {review.product.brand_name}
+        </p>
+        <Link href={`/reviews/${review.id}`} className="feed-title">
+          {review.title}
+        </Link>
+        <p className="feed-body">{review.body}</p>
+        <p className="feed-author">@{review.author.username}</p>
+      </div>
+      <aside className="feed-rail">
+        <div className="feed-avatar">{initial}</div>
+        <div className="feed-action">
+          <span aria-hidden>★</span>
+          <span>{review.overall_rating}</span>
+        </div>
+        <Link href={`/reviews/${review.id}`} className="feed-action">
+          <span aria-hidden>▸</span>
+          <span>Open</span>
+        </Link>
+      </aside>
+    </article>
   );
 }

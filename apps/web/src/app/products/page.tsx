@@ -13,18 +13,18 @@ export default function ProductsPage() {
   }, []);
   return (
     <div className="space-y-6">
-      <div className="flex justify-between">
-        <h1 className="serif text-3xl">Products</h1>
-        <Link href="/products/new" className="rounded-full bg-teal-700 px-4 py-2 text-sm text-white">
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold">Shop</h1>
+        <Link href="/products/new" className="btn">
           Add product
         </Link>
       </div>
-      <ul className="divide-y rounded-2xl border bg-white">
+      <ul className="space-y-3">
         {items.map((product) => (
-          <li key={product.id} className="px-4 py-3">
-            <Link href={`/products/${product.id}`}>
+          <li key={product.id}>
+            <Link href={`/products/${product.id}`} className="compact-card">
               {product.brand_name} {product.name}
-              <span className="block text-sm text-slate-500">{product.category.name}</span>
+              <span className="muted block text-sm">{product.category.name}</span>
             </Link>
           </li>
         ))}

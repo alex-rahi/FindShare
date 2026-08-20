@@ -22,8 +22,8 @@ class Settings(BaseSettings):
     cookie_samesite: str = "lax"
     cors_origins: str = "http://localhost:3000"
 
-    registration_mode: str = "invite_only"
-    maximum_active_users: int = 10
+    registration_mode: str = "open"
+    maximum_active_users: int = 10000
     reviews_per_user: int = 25
     images_per_review: int = 5
     maximum_image_size_mb: int = 10
