@@ -26,6 +26,9 @@ export default function LoginPage() {
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">Sign in</h1>
+      <p className="muted text-sm">
+        Seeded local accounts are demonstration data. Registration is invitation-only by default.
+      </p>
       <form onSubmit={onSubmit} className="panel">
         {error ? <p className="text-sm text-red-400">{error}</p> : null}
         <input
@@ -41,6 +44,9 @@ export default function LoginPage() {
       </form>
       <p className="muted">
         New here? <Link href="/register">Create an account</Link>
+      </p>
+      <p className="muted">
+        <Link href="/reset-password">Forgot password?</Link>
       </p>
     </div>
   );

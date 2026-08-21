@@ -1,8 +1,9 @@
 from contextlib import asynccontextmanager
 from logging import getLogger
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from sqlalchemy import text
 
 from app.config import get_settings
@@ -25,7 +26,10 @@ async def lifespan(_app: FastAPI):
 
 app = FastAPI(
     title="FindShare API",
-    description="Social product-discovery platform (Phase 1 local foundation). Registration is open by default.",
+    description=(
+        "Social product-discovery platform (Phase 1 local foundation). "
+        "Registration is invitation-only by default."
+    ),
     version="0.1.0",
     lifespan=lifespan,
 )
@@ -39,6 +43,20 @@ app.add_middleware(
 )
 app.include_router(auth.router)
 app.include_router(catalog.router)
+
+_OPEN_PATHS = {"/health", "/ready", "/docs", "/openapi.json", "/redoc"}
+
+
+@app.middleware("http")
+async def maintenance_gate(request: Request, call_next):
+    if request.url.path in _OPEN_PATHS:
+        return await call_next(request)
+    if settings.maintenance_mode:
+        return JSONResponse(
+            {"detail": "FindShare is in maintenance mode.", "code": "MAINTENANCE"},
+            status_code=503,
+        )
+    return await call_next(request)
 
 
 @app.get("/health")

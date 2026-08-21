@@ -1,8 +1,8 @@
 # FindShare
 
-FindShare is a social product-discovery platform where users share reviews, ratings, recommendations, images, prices, and shopping information across consumer-product categories. It includes secure media uploads, AI-assisted moderation, human review, and production-style AWS infrastructure managed with Terraform, EKS, Helm, and GitHub Actions.
+FindShare is an invitation-only social product-discovery platform where users share reviews, ratings, recommendations, images, prices, and shopping information across consumer-product categories. It includes secure media uploads, AI-assisted moderation, human review, and production-style AWS infrastructure managed with Terraform, EKS, Helm, and GitHub Actions.
 
-**Current implementation status:** Phase 1 (local foundation) with an open GymTok-style review feed. Later phases are documented, not implemented. See [docs/implementation-plan.md](docs/implementation-plan.md).
+**Current implementation status:** Phase 1 (local foundation). Later phases are documented, not implemented. See [docs/implementation-plan.md](docs/implementation-plan.md).
 
 | Claim | Status |
 | --- | --- |
@@ -14,7 +14,7 @@ FindShare is a social product-discovery platform where users share reviews, rati
 
 ## Stage 1: private development
 
-Open registration. Image uploads, comments, live ads, and public collections are still disabled in Phase 1.
+Invitation-only registration. Image uploads, comments, live ads, and public collections are disabled in Phase 1.
 
 ```bash
 cp .env.example .env
@@ -26,15 +26,17 @@ docker compose up --build
 - API health: http://localhost:8000/health
 - OpenAPI: http://localhost:8000/docs
 
+If those host ports are already taken, override them (see [docs/local-development.md](docs/local-development.md)).
+
 Seeded local accounts (development only, labeled demonstration data):
 
 | Role | Username | Email | Password |
 | --- | --- | --- | --- |
-| admin | `admin` | `admin@findshare.local` | `FindShareAdmin!dev` |
-| moderator | `moderator` | `moderator@findshare.local` | `FindShareMod!dev` |
-| demo reviewer | `demo_reviewer` | `demo.reviewer@findshare.local` | `FindShareDemo!dev` |
+| admin | `admin` | `admin@example.com` | `FindShareAdmin!dev` |
+| moderator | `moderator` | `moderator@example.com` | `FindShareMod!dev` |
+| demo reviewer | `demo_reviewer` | `demo.reviewer@example.com` | `FindShareDemo!dev` |
 
-Invitation codes are optional and unused in open registration.
+Invitation codes are required for new registration. Local development code: `FINDSHARE-DEV-INVITE`.
 
 ## Notices
 
@@ -71,4 +73,6 @@ Do not treat unrun tests, planned AWS environments, or roadmap scenarios as comp
 
 ## Documentation
 
-Start with [docs/implementation-plan.md](docs/implementation-plan.md), then [docs/local-development.md](docs/local-development.md) and [docs/api-contracts.md](docs/api-contracts.md).
+Interviewer starting point: [docs/interview-package.md](docs/interview-package.md) and the 10–15 minute script in [docs/interview-demo.md](docs/interview-demo.md).
+
+Then [docs/implementation-plan.md](docs/implementation-plan.md), [docs/local-development.md](docs/local-development.md), and [docs/api-contracts.md](docs/api-contracts.md).

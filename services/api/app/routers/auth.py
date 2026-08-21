@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Depends, Request, Response
+from fastapi.security import HTTPAuthorizationCredentials
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
@@ -11,6 +12,7 @@ from app.schemas import (
     AuthMeOut,
     LoginIn,
     PasswordResetConfirm,
+    PasswordResetOut,
     PasswordResetRequest,
     ProfileUpdate,
     RegisterIn,
@@ -18,7 +20,7 @@ from app.schemas import (
     TokenPair,
     VerifyIn,
 )
-from app.security import get_current_user, require_verified_user
+from app.security import bearer_scheme, decode_token, get_current_user, rate_limit, require_verified_user
 
 router = APIRouter(prefix="/api/v1")
 
@@ -37,6 +39,7 @@ def _set_cookie(response: Response, token: str, settings: Settings) -> None:
 
 @router.post("/auth/register", response_model=RegisterOut, status_code=201)
 def register(body: RegisterIn, response: Response, db: Session = Depends(get_db), settings: Settings = Depends(get_settings)):
+    rate_limit("rl:register", limit=20, window_seconds=3600)
     user, verify_token = auth_service.register_user(
         db,
         email=body.email,
@@ -56,6 +59,7 @@ def register(body: RegisterIn, response: Response, db: Session = Depends(get_db)
 
 @router.post("/auth/login", response_model=RegisterOut)
 def login(body: LoginIn, response: Response, db: Session = Depends(get_db), settings: Settings = Depends(get_settings)):
+    rate_limit("rl:login", limit=30, window_seconds=300)
     user = auth_service.authenticate(db, body.email_or_username, body.password)
     tokens = auth_service.issue_tokens(user)
     _set_cookie(response, tokens.access_token, settings)
@@ -69,13 +73,21 @@ def login(body: LoginIn, response: Response, db: Session = Depends(get_db), sett
 
 @router.post("/auth/logout", status_code=204)
 def logout(
+    request: Request,
     response: Response,
+    credentials: HTTPAuthorizationCredentials | None = Depends(bearer_scheme),
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
     settings: Settings = Depends(get_settings),
 ):
-    # jti is not required for Phase 1 logout; cookie is cleared either way
-    auth_service.logout_user(db, user, jti=None)
+    token = credentials.credentials if credentials else request.cookies.get("access_token")
+    jti = None
+    if token:
+        try:
+            jti = decode_token(token, settings).get("jti")
+        except Exception:
+            jti = None
+    auth_service.logout_user(db, user, jti=jti)
     response.delete_cookie("access_token", path="/")
 
 
@@ -89,10 +101,15 @@ def verify_email(body: VerifyIn, db: Session = Depends(get_db)):
     auth_service.verify_email(db, body.token)
 
 
-@router.post("/auth/password-reset/request", status_code=202)
-def password_reset_request(body: PasswordResetRequest, db: Session = Depends(get_db)):
-    auth_service.request_password_reset(db, body.email)
-    return {"detail": "If an account exists, a reset token was created.", "code": "ACCEPTED"}
+@router.post("/auth/password-reset/request", status_code=202, response_model=PasswordResetOut)
+def password_reset_request(
+    body: PasswordResetRequest, db: Session = Depends(get_db), settings: Settings = Depends(get_settings)
+):
+    raw = auth_service.request_password_reset(db, body.email)
+    return PasswordResetOut(
+        detail="If an account exists, a reset token was created.",
+        local_reset_token=raw if settings.app_env in {"local", "test"} else None,
+    )
 
 
 @router.post("/auth/password-reset/confirm", status_code=204)

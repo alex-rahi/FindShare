@@ -71,6 +71,10 @@ def deny_jti(jti: str, ttl_seconds: int) -> None:
     _set(f"token:deny:{jti}", "1", ttl_seconds)
 
 
+def is_jti_denied(jti: str) -> bool:
+    return _get(f"token:deny:{jti}") == "1"
+
+
 def maybe_log_local_token(kind: str, token: str) -> None:
     settings = get_settings()
     if settings.app_env == "local":

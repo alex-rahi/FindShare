@@ -15,6 +15,8 @@ type Review = {
   state: string;
   review_kind: string;
   recommended: boolean | null;
+  pros: string[];
+  cons: string[];
   author: { id: string; username: string };
   product: { id: string; name: string; brand_name: string; category: { requires_health_notice: boolean } };
 };
@@ -37,13 +39,14 @@ export default function ReviewPage() {
     <article className="space-y-4">
       <p className="feed-kicker">
         {review.state} · {review.review_kind} · {review.overall_rating}/5
+        {review.recommended === true ? " · recommended" : review.recommended === false ? " · not recommended" : ""}
       </p>
       <h1 className="text-4xl font-bold">{review.title}</h1>
       <p>
         <Link href={`/products/${review.product.id}`}>
           {review.product.brand_name} {review.product.name}
         </Link>{" "}
-        · @{review.author.username}
+        · <Link href={`/users/${review.author.username}`}>@{review.author.username}</Link>
       </p>
       {mine && review.state !== "published" ? (
         <button
@@ -54,6 +57,17 @@ export default function ReviewPage() {
           }}
         >
           Publish
+        </button>
+      ) : null}
+      {mine && review.state === "published" ? (
+        <button
+          type="button"
+          className="feed-ghost"
+          onClick={async () => {
+            setReview(await api<Review>(`/api/v1/reviews/${id}/archive`, { method: "POST" }));
+          }}
+        >
+          Archive
         </button>
       ) : null}
       {mine ? (
@@ -69,7 +83,10 @@ export default function ReviewPage() {
         </button>
       ) : null}
       <p className="whitespace-pre-wrap leading-relaxed">{review.body}</p>
+      {review.pros?.length ? <p>Pros: {review.pros.join(", ")}</p> : null}
+      {review.cons?.length ? <p>Cons: {review.cons.join(", ")}</p> : null}
       {review.product.category.requires_health_notice ? <p className="notice">{NOTICES.health}</p> : null}
+      <p className="notice">{NOTICES.general}</p>
     </article>
   );
 }

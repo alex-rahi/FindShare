@@ -180,3 +180,72 @@ def test_publish_true_on_create(client):
     assert created.json()["state"] == "published"
     feed_titles = [item["title"] for item in client.get("/api/v1/feed").json()["items"]]
     assert "Published on create" in feed_titles
+
+
+def test_archive_removes_from_feed(client):
+    headers = _login(client)
+    listing = client.get("/api/v1/reviews")
+    review = next(item for item in listing.json()["items"] if item["author"]["username"] == "demo_reviewer")
+    archived = client.post(f"/api/v1/reviews/{review['id']}/archive", headers=headers)
+    assert archived.status_code == 200
+    assert archived.json()["state"] == "archived"
+    titles = [item["title"] for item in client.get("/api/v1/feed").json()["items"]]
+    assert review["title"] not in titles
+    hidden = client.get("/api/v1/search", params={"q": review["title"], "type": "review"})
+    assert hidden.json()["reviews"] == []
+
+
+def test_review_quota(client, db_session):
+    from app.models.platform import BetaConfiguration
+
+    config = db_session.get(BetaConfiguration, 1)
+    config.reviews_per_user = 1
+    db_session.commit()
+    headers = _login(client, "admin", "FindShareAdmin!dev")
+    product_id = client.get("/api/v1/products").json()["items"][0]["id"]
+    # admin already has one seeded review
+    blocked = client.post(
+        "/api/v1/reviews",
+        headers=headers,
+        json={
+            "product_id": product_id,
+            "title": "Over quota",
+            "body": "Should be blocked by the configurable review quota.",
+            "overall_rating": 3,
+        },
+    )
+    assert blocked.status_code == 403
+    assert blocked.json()["code"] == "REVIEW_QUOTA"
+
+
+def test_negative_price_rejected(client):
+    headers = _login(client)
+    categories = client.get("/api/v1/categories").json()
+    technology = next(item for item in categories if item["slug"] == "technology")
+    response = client.post(
+        "/api/v1/products",
+        headers=headers,
+        json={
+            "name": "Impossible Price Gadget",
+            "brand_name": "FixtureBrand",
+            "category_id": technology["id"],
+            "typical_price_min": -5,
+        },
+    )
+    assert response.status_code == 422
+
+
+def test_feature_flags_disable_media_and_ads(client):
+    flags = client.get("/api/v1/meta/flags").json()
+    assert flags["image_uploads_enabled"] is False
+    assert flags["comments_enabled"] is False
+    assert flags["live_advertising_enabled"] is False
+    assert flags["advertising_provider"] == "mock"
+
+
+def test_mine_includes_drafts(client):
+    headers = _login(client)
+    mine = client.get("/api/v1/me/reviews", headers=headers).json()["items"]
+    titles = [item["title"] for item in mine]
+    assert "Unfinished notes (draft)" in titles
+    assert all(item["state"] != "deleted" for item in mine)

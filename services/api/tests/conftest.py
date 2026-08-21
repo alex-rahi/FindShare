@@ -6,6 +6,8 @@ os.environ["SECRET_KEY"] = "test-secret-key-which-is-long-enough-32ch"
 os.environ["DATABASE_URL"] = "sqlite://"
 os.environ["REDIS_URL"] = "redis://localhost:6379/15"
 os.environ["JWT_ACCESS_TTL_MINUTES"] = "60"
+os.environ["REGISTRATION_MODE"] = "open"
+os.environ["MAXIMUM_ACTIVE_USERS"] = "10000"
 
 from collections.abc import Generator
 

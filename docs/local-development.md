@@ -24,6 +24,14 @@ Wait until `api` and `web` are healthy.
 | PostgreSQL | localhost:5432 |
 | Redis | localhost:6379 |
 
+If those host ports are already in use, override them when starting Compose:
+
+```bash
+WEB_HOST_PORT=3001 API_HOST_PORT=8001 POSTGRES_HOST_PORT=5433 REDIS_HOST_PORT=6380 docker compose up --build
+```
+
+Container-to-container URLs stay `postgres:5432` and `redis:6379`.
+
 ## Seeded accounts
 
 Demonstration data only. Change passwords before any shared environment.
@@ -31,7 +39,8 @@ Demonstration data only. Change passwords before any shared environment.
 - Admin: `admin` / `FindShareAdmin!dev`
 - Moderator: `moderator` / `FindShareMod!dev`
 - Demo reviewer: `demo_reviewer` / `FindShareDemo!dev`
-Registration is open. An invitation code is seeded for `REGISTRATION_MODE=invite_only` only.
+
+Registration is invitation-only by default. Local invitation code: `FINDSHARE-DEV-INVITE`.
 
 Email verification tokens for newly registered users are printed by the API process in `APP_ENV=local` only.
 

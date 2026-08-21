@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { TabBar } from "@/components/TabBar";
+import { Footer } from "@/components/Footer";
 import { useAuth } from "@/lib/auth";
 
 function FeedChrome() {
@@ -21,6 +22,7 @@ function FeedChrome() {
         <Link href="/?sort=recent" className={recent ? "is-on" : ""}>
           Recent
         </Link>
+        <Link href="/search">Search</Link>
       </span>
       {ready && user ? (
         <button type="button" className="feed-ghost" onClick={() => void logout()}>
@@ -51,10 +53,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <Link href="/" className="feed-brand">
             FindShare
           </Link>
+          <Link href="/search">Search</Link>
           {ready && user ? <span className="muted">@{user.username}</span> : <Link href="/register">Join</Link>}
         </header>
       )}
       <div className={isFeed ? "feed-root" : "page-root"}>{children}</div>
+      {!isFeed ? <Footer /> : null}
       <TabBar />
     </>
   );

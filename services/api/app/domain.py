@@ -39,3 +39,20 @@ def is_public_review_state(state: str) -> bool:
 
 def can_publish_text_review(*, title: str, body: str, rating: int | None) -> bool:
     return bool(title.strip()) and bool(body.strip()) and rating is not None and 1 <= rating <= 5
+
+
+def normalize_money(value: Decimal | None) -> Decimal | None:
+    if value is None:
+        return None
+    if value < 0:
+        raise ValueError("Prices cannot be negative")
+    if value > Decimal("10000000"):
+        raise ValueError("Price is implausibly large")
+    return value.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+
+
+def assumed_monthly_cost(*, active_users: int, cost_per_active_user: Decimal) -> Decimal:
+    """Arithmetic helper for planning models. Not a measured AWS bill."""
+    if active_users < 0 or cost_per_active_user < 0:
+        raise ValueError("Cost inputs cannot be negative")
+    return (Decimal(active_users) * cost_per_active_user).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)

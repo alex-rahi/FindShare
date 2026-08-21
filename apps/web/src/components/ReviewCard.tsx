@@ -48,7 +48,9 @@ export function ReviewCard({
           {review.title}
         </Link>
         <p className="feed-body">{review.body}</p>
-        <p className="feed-author">@{review.author.username}</p>
+        <p className="feed-author">
+          <Link href={`/users/${review.author.username}`}>@{review.author.username}</Link>
+        </p>
       </div>
       <aside className="feed-rail">
         <div className="feed-avatar">{initial}</div>

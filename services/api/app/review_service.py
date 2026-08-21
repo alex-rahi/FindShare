@@ -9,7 +9,7 @@ from app.domain import can_publish_text_review, is_public_review_state
 from app.errors import AppError
 from app.models.catalog import Category, Product, ProductStatus
 from app.models.review import Review, ReviewState
-from app.models.user import User, UserRole, UserStatus
+from app.models.user import Profile, User, UserRole, UserStatus
 from app.schemas import (
     AuthorOut,
     CategoryOut,
@@ -136,6 +136,8 @@ def update_review(db: Session, viewer: User, review_id: UUID, data: ReviewUpdate
 
 
 def _publish(review: Review) -> None:
+    if review.state == ReviewState.DELETED.value:
+        raise AppError("NOT_FOUND", "Review not found.", 404)
     if not can_publish_text_review(title=review.title, body=review.body, rating=review.overall_rating):
         raise AppError("CANNOT_PUBLISH", "Review needs a title, body, and rating before it can be published.", 403)
     review.state = ReviewState.PUBLISHED.value
@@ -147,6 +149,19 @@ def publish_review(db: Session, viewer: User, review_id: UUID) -> Review:
     if viewer.id != review.author_id and viewer.role != UserRole.ADMIN:
         raise AppError("FORBIDDEN", "You may only modify your own resources.", 403)
     _publish(review)
+    db.commit()
+    return get_review(db, review.id, viewer)
+
+
+def archive_review(db: Session, viewer: User, review_id: UUID) -> Review:
+    review = get_review(db, review_id, viewer)
+    if viewer.id != review.author_id and viewer.role != UserRole.ADMIN:
+        raise AppError("FORBIDDEN", "You may only modify your own resources.", 403)
+    if review.state not in {ReviewState.PUBLISHED.value, ReviewState.DRAFT.value}:
+        raise AppError("CANNOT_ARCHIVE", "Only draft or published reviews can be archived.", 403)
+    review.state = ReviewState.ARCHIVED.value
+    review.published_at = None
+    review.version += 1
     db.commit()
     return get_review(db, review.id, viewer)
 
@@ -218,7 +233,25 @@ def list_users_matching(db: Session, q: str, limit: int = 20):
         db.scalars(
             select(User)
             .options(selectinload(User.profile))
-            .where(User.status == UserStatus.ACTIVE, or_(User.username.ilike(like), User.email.ilike(like)))
+            .outerjoin(Profile, Profile.user_id == User.id)
+            .where(
+                User.status == UserStatus.ACTIVE,
+                or_(User.username.ilike(like), Profile.display_name.ilike(like)),
+            )
             .limit(limit)
-        ).all()
+        )
+        .unique()
+        .all()
     )
+
+
+def list_mine(db: Session, user: User, *, limit: int = 20, offset: int = 0):
+    stmt = (
+        select(Review)
+        .options(*_eager())
+        .where(Review.author_id == user.id, Review.state != ReviewState.DELETED)
+        .order_by(Review.updated_at.desc())
+    )
+    total = db.scalar(select(func.count()).select_from(stmt.subquery()))
+    rows = list(db.scalars(stmt.limit(limit).offset(offset)).unique().all())
+    return rows, int(total or 0)

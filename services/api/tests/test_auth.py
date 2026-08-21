@@ -80,6 +80,59 @@ def test_beta_status_is_open(client):
     assert data["registration_enabled"] is True
 
 
+def test_register_with_valid_invite(client, db_session):
+    from app.models.platform import BetaConfiguration
+
+    config = db_session.get(BetaConfiguration, 1)
+    config.registration_mode = "invite_only"
+    config.maximum_active_users = 25
+    db_session.commit()
+    response = client.post(
+        "/api/v1/auth/register",
+        json={
+            "email": "invited-ok@example.com",
+            "username": "invited_ok",
+            "password": "TestUser1!ok",
+            "invitation_code": "FINDSHARE-DEV-INVITE",
+        },
+    )
+    assert response.status_code == 201, response.text
+
+
+def test_password_reset_roundtrip(client):
+    requested = client.post("/api/v1/auth/password-reset/request", json={"email": "demo.reviewer@example.com"})
+    assert requested.status_code == 202
+    token = requested.json()["local_reset_token"]
+    assert token
+    confirm = client.post(
+        "/api/v1/auth/password-reset/confirm",
+        json={"token": token, "new_password": "NewPass!2345"},
+    )
+    assert confirm.status_code == 204
+    login = client.post(
+        "/api/v1/auth/login",
+        json={"email_or_username": "demo_reviewer", "password": "NewPass!2345"},
+    )
+    assert login.status_code == 200
+
+
+def test_logout_revokes_access_token(client):
+    login = client.post(
+        "/api/v1/auth/login",
+        json={"email_or_username": "admin", "password": "FindShareAdmin!dev"},
+    )
+    token = login.json()["tokens"]["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+    assert client.get("/api/v1/auth/me", headers=headers).status_code == 200
+    assert client.post("/api/v1/auth/logout", headers=headers).status_code == 204
+    assert client.get("/api/v1/auth/me", headers=headers).status_code == 401
+
+
+def test_search_does_not_match_email(client):
+    response = client.get("/api/v1/search", params={"q": "example.com", "type": "user"})
+    assert response.json()["users"] == []
+
+
 def test_account_deletion_hides_identity(client):
     registered = client.post(
         "/api/v1/auth/register",

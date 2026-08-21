@@ -93,7 +93,9 @@ Independently deployable and destroyable. No live cluster exists in Phase 1.
 
 ## Auth model (Phase 1)
 
-Local JWT provider. Access token `sub` is the user UUID. Each request loads the user from PostgreSQL. Role and status come from the database, not the token payload and not the client. Logout records the JWT `jti` in Redis until expiry. Cognito replaces this provider in Phase 4 behind the same application interface.
+Local JWT provider. Access token `sub` is the user UUID. Each request loads the user from PostgreSQL. Role and status come from the database, not the token payload and not the client. Logout records the JWT `jti` in Redis (with an in-memory fallback for tests) until expiry. Cognito replaces this provider in Phase 4 behind the same application interface.
+
+Stage 1 default: `registration_mode=invite_only` with `maximum_active_users=10`. Seeded developer accounts can sign in without registering. New accounts require `SEED_INVITATION_CODE` (local) or an administrator-generated code.
 
 ## Publication boundary (all phases)
 

@@ -9,16 +9,19 @@ YOLO is an object detector. It does not, by itself, guarantee content safety. Se
 ```mermaid
 stateDiagram-v2
   [*] --> DRAFT
-  DRAFT --> PENDING_MODERATION: submit
-  PENDING_MODERATION --> PUBLISHED: auto-approve text-only Phase 1
+  DRAFT --> PUBLISHED: Phase 1 author publish
+  DRAFT --> PENDING_MODERATION: Phase 3+ submit
+  PENDING_MODERATION --> PUBLISHED: auto-approve text-only
   PENDING_MODERATION --> NEEDS_REVIEW: classifier uncertain
   PENDING_MODERATION --> REJECTED: policy fail
   NEEDS_REVIEW --> PUBLISHED: human approve
   NEEDS_REVIEW --> REJECTED: human reject
   PUBLISHED --> ARCHIVED: author archive
+  PUBLISHED --> DRAFT: author edit
   PUBLISHED --> DELETED: author delete
+  ARCHIVED --> PUBLISHED: author republish
+  ARCHIVED --> DELETED: author delete
   REJECTED --> DRAFT: appeal granted / edit
-  ARCHIVED --> [*]: retain per policy
 ```
 
 Phase 1 implements `DRAFT`, `PUBLISHED`, `ARCHIVED`, and `DELETED`. `PENDING_MODERATION`, `NEEDS_REVIEW`, and `REJECTED` columns exist so later phases do not break the contract; the Phase 1 publish path sets `PUBLISHED` only for the author-owned draft (no classifier). **Fail closed:** list/feed/search queries filter `state = published`.

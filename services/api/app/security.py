@@ -52,6 +52,23 @@ def get_redis(settings: Settings | None = None) -> redis.Redis:
     return redis.Redis.from_url(settings.redis_url, decode_responses=True)
 
 
+def rate_limit(key: str, limit: int, window_seconds: int) -> None:
+    from app.errors import AppError
+
+    settings = get_settings()
+    if settings.app_env == "test":
+        return
+    try:
+        client = get_redis()
+        count = int(client.incr(key))
+        if count == 1:
+            client.expire(key, window_seconds)
+        if count > limit:
+            raise AppError("RATE_LIMITED", "Too many attempts. Try again later.", 429)
+    except redis.RedisError:
+        return
+
+
 def create_token(
     subject: UUID,
     token_type: str,
@@ -110,12 +127,10 @@ def get_current_user(
     if payload.get("typ") != "access":
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token type")
 
-    r = get_redis(settings)
-    try:
-        if r.get(f"token:deny:{payload['jti']}"):
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token revoked")
-    except redis.RedisError:
-        pass
+    from app.tokens import is_jti_denied
+
+    if payload.get("jti") and is_jti_denied(str(payload["jti"])):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token revoked")
 
     user = db.get(User, UUID(payload["sub"]))
     if user is None or user.status == UserStatus.DELETED:

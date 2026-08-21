@@ -9,8 +9,8 @@ export const NOTICES = {
 
 export function Footer() {
   return (
-    <footer className="mt-16 border-t border-slate-200 bg-white px-4 py-10 text-sm text-slate-600">
-      <div className="mx-auto max-w-5xl space-y-3">
+    <footer className="px-4 pb-24 pt-8 text-sm text-zinc-400">
+      <div className="mx-auto max-w-xl space-y-3">
         <p>{NOTICES.general}</p>
         <p>{NOTICES.pricing}</p>
         <p>{NOTICES.health}</p>

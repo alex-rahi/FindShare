@@ -70,3 +70,6 @@ k6-results/
 
 # Logs
 *.log
+
+# Accidental root lockfile (this repo has no root package.json)
+/package-lock.json

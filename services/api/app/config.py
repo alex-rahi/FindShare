@@ -22,8 +22,8 @@ class Settings(BaseSettings):
     cookie_samesite: str = "lax"
     cors_origins: str = "http://localhost:3000"
 
-    registration_mode: str = "open"
-    maximum_active_users: int = 10000
+    registration_mode: str = "invite_only"
+    maximum_active_users: int = 10
     reviews_per_user: int = 25
     images_per_review: int = 5
     maximum_image_size_mb: int = 10
@@ -38,13 +38,13 @@ class Settings(BaseSettings):
     maintenance_mode: bool = False
 
     seed_on_startup: bool = True
-    seed_admin_email: str = "admin@findshare.local"
+    seed_admin_email: str = "admin@example.com"
     seed_admin_username: str = "admin"
     seed_admin_password: str = "FindShareAdmin!dev"
-    seed_moderator_email: str = "moderator@findshare.local"
+    seed_moderator_email: str = "moderator@example.com"
     seed_moderator_username: str = "moderator"
     seed_moderator_password: str = "FindShareMod!dev"
-    seed_demo_email: str = "demo.reviewer@findshare.local"
+    seed_demo_email: str = "demo.reviewer@example.com"
     seed_demo_username: str = "demo_reviewer"
     seed_demo_password: str = "FindShareDemo!dev"
     seed_invitation_code: str = "FINDSHARE-DEV-INVITE"

@@ -2,7 +2,7 @@ from datetime import date, datetime
 from decimal import Decimal
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
 
 class APIModel(BaseModel):
@@ -10,7 +10,7 @@ class APIModel(BaseModel):
 
 
 class RegisterIn(BaseModel):
-    email: str
+    email: EmailStr
     username: str
     password: str
     invitation_code: str | None = None
@@ -66,7 +66,13 @@ class VerifyIn(BaseModel):
 
 
 class PasswordResetRequest(BaseModel):
-    email: str
+    email: EmailStr
+
+
+class PasswordResetOut(APIModel):
+    detail: str
+    code: str = "ACCEPTED"
+    local_reset_token: str | None = None
 
 
 class PasswordResetConfirm(BaseModel):
@@ -148,6 +154,15 @@ class ProductUpdate(BaseModel):
     release_year: int | None = None
     status: str | None = None
     version: int | None = None
+
+    @field_validator("typical_price_min", "typical_price_max")
+    @classmethod
+    def non_negative(cls, value: Decimal | None) -> Decimal | None:
+        if value is not None and value < 0:
+            raise ValueError("Prices cannot be negative")
+        if value is not None and value > Decimal("10000000"):
+            raise ValueError("Price is implausibly large")
+        return value
 
 
 class ProductOut(APIModel):
@@ -247,3 +262,19 @@ class Notices(APIModel):
     pricing: str
     health: str
     legal_review_required: bool = True
+
+
+class FeatureFlags(APIModel):
+    registration_mode: str
+    registration_enabled: bool
+    image_uploads_enabled: bool
+    comments_enabled: bool
+    price_submissions_enabled: bool
+    public_collections_enabled: bool
+    placeholder_ads_enabled: bool
+    live_advertising_enabled: bool
+    advertising_provider: str
+    maintenance_mode: bool
+    reviews_per_user: int
+    images_per_review: int
+    maximum_image_size_mb: int

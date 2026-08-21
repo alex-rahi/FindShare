@@ -34,7 +34,7 @@ Error shape:
 | POST | `/api/v1/auth/password-reset/confirm` | No | token, new_password |
 | GET | `/api/v1/auth/me` | Yes | — |
 
-Register is open by default (`REGISTRATION_MODE=open`). Invitation codes are required only when `registration_mode=invite_only`. In that mode, reaching `maximum_active_users` returns `BETA_FULL`.
+Register is invitation-only by default (`REGISTRATION_MODE=invite_only`, `MAXIMUM_ACTIVE_USERS=10`). Open registration is a configurable alternative. Reaching `maximum_active_users` returns `BETA_FULL`. Invalid or missing codes return `INVITE_REQUIRED` or `INVALID_INVITE`.
 
 Email verification and password-reset tokens are stored in Redis and **logged in local development only** (never emailed in Phase 1). Tokens are not written to application logs in any other environment.
 
@@ -77,7 +77,9 @@ Typical price range is user-supplied catalog metadata, not a live retailer price
 | POST | `/api/v1/reviews` | Yes |
 | PATCH | `/api/v1/reviews/{id}` | Owner |
 | POST | `/api/v1/reviews/{id}/publish` | Owner |
+| POST | `/api/v1/reviews/{id}/archive` | Owner |
 | DELETE | `/api/v1/reviews/{id}` | Owner (soft delete) |
+| GET | `/api/v1/me/reviews` | Owner (includes drafts) |
 
 Create fields: product_id, title, body, overall_rating (1–5), pros[], cons[], recommended, review_kind, length_of_ownership, usage_context, purchase_date, publish (bool).
 
@@ -105,6 +107,7 @@ Phase 1 `popular` orders published reviews by `overall_rating` desc, then `publi
 | Method | Path | Auth |
 | --- | --- | --- |
 | GET | `/api/v1/meta/notices` | No | Standard product, health, and price disclaimers |
+| GET | `/api/v1/meta/flags` | No | Kill switches (uploads, comments, ads) — Phase 1 values are all off except registration |
 
 ## Deferred endpoints (not in Phase 1)
 

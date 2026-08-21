@@ -109,7 +109,7 @@ Phase 1 uses `brand_name` on Product rather than a Brand table. Category-specifi
 
 - Unique email and username on `users`
 - Unique category slug; unique `(category_id, slug)` on subcategories
-- Unique `(normalized_name, lower(brand_name))` among non-archived products
+- Unique `(normalized_name, brand_normalized)` on products
 - Review `overall_rating` between 1 and 5
 - Review `state` in `draft | pending_moderation | needs_review | published | rejected | archived | deleted`
 - User `role` in `user | moderator | admin`

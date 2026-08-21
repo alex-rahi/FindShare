@@ -12,6 +12,9 @@ type Product = {
   name: string;
   description: string | null;
   brand_name: string;
+  typical_price_min: string | number | null;
+  typical_price_max: string | number | null;
+  currency: string;
   category: { name: string; requires_health_notice: boolean };
   average_rating: number | null;
   review_count: number;
@@ -33,10 +36,20 @@ export default function ProductDetailPage() {
       </p>
       <h1 className="text-4xl font-bold">{product.name}</h1>
       <p className="muted">{product.description}</p>
+      {product.typical_price_min || product.typical_price_max ? (
+        <p className="muted">
+          Typical catalog range (user-submitted, not live retailer pricing): {product.currency}{" "}
+          {product.typical_price_min ?? "—"}–{product.typical_price_max ?? "—"}
+        </p>
+      ) : null}
+      <p>
+        {product.average_rating ? `${product.average_rating}/5 from ${product.review_count} published reviews` : "No published ratings yet"}
+      </p>
       <Link href={`/reviews/new?product=${product.id}`} className="btn inline-block">
         Write a review
       </Link>
       {product.category.requires_health_notice ? <p className="notice">{NOTICES.health}</p> : null}
+      <p className="notice">{NOTICES.pricing}</p>
       <div className="space-y-3">
         {reviews.map((review) => (
           <ReviewCard key={review.id} review={review} variant="compact" />

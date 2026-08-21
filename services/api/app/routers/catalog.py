@@ -10,6 +10,7 @@ from app.models.user import User
 from app.schemas import (
     BetaStatus,
     CategoryOut,
+    FeatureFlags,
     Notices,
     ProductCreate,
     ProductOut,
@@ -18,7 +19,7 @@ from app.schemas import (
     ReviewOut,
     ReviewUpdate,
 )
-from app.security import get_current_user_optional, require_verified_user
+from app.security import get_current_user, get_current_user_optional, require_verified_user
 
 router = APIRouter(prefix="/api/v1")
 
@@ -140,9 +141,25 @@ def publish_review(review_id: UUID, user: User = Depends(require_verified_user),
     return review_service.to_out(review_service.publish_review(db, user, review_id))
 
 
+@router.post("/reviews/{review_id}/archive", response_model=ReviewOut)
+def archive_review(review_id: UUID, user: User = Depends(require_verified_user), db: Session = Depends(get_db)):
+    return review_service.to_out(review_service.archive_review(db, user, review_id))
+
+
 @router.delete("/reviews/{review_id}", status_code=204)
 def delete_review(review_id: UUID, user: User = Depends(require_verified_user), db: Session = Depends(get_db)):
     review_service.delete_review(db, user, review_id)
+
+
+@router.get("/me/reviews")
+def my_reviews(
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+    limit: int = Query(20, ge=1, le=50),
+    offset: int = Query(0, ge=0),
+):
+    rows, total = review_service.list_mine(db, user, limit=limit, offset=offset)
+    return {"items": [review_service.to_out(r) for r in rows], "limit": limit, "offset": offset, "total": total}
 
 
 @router.get("/feed")
@@ -208,3 +225,23 @@ def beta_status(db: Session = Depends(get_db)):
 @router.get("/meta/notices", response_model=Notices)
 def notices():
     return Notices(general=GENERAL, pricing=PRICING, health=HEALTH, legal_review_required=True)
+
+
+@router.get("/meta/flags", response_model=FeatureFlags)
+def flags(db: Session = Depends(get_db)):
+    beta = get_beta(db)
+    return FeatureFlags(
+        registration_mode=beta.registration_mode,
+        registration_enabled=beta.registration_enabled,
+        image_uploads_enabled=beta.image_uploads_enabled,
+        comments_enabled=beta.comments_enabled,
+        price_submissions_enabled=beta.price_submissions_enabled,
+        public_collections_enabled=beta.public_collections_enabled,
+        placeholder_ads_enabled=beta.placeholder_ads_enabled,
+        live_advertising_enabled=beta.live_advertising_enabled,
+        advertising_provider=beta.advertising_provider,
+        maintenance_mode=beta.maintenance_mode,
+        reviews_per_user=beta.reviews_per_user,
+        images_per_review=beta.images_per_review,
+        maximum_image_size_mb=beta.maximum_image_size_mb,
+    )
