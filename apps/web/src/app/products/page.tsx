@@ -70,9 +70,9 @@ export default function ProductsPage() {
         {items.map((product) => (
           <li key={product.id}>
             <Link href={`/products/${product.id}`} className="compact-card">
-              {product.brand_name} {product.name}
+              {product.name}
               <span className="muted block text-sm">
-                {product.category.name}
+                {product.brand_name} · {product.category.name}
                 {product.average_rating ? ` · ${product.average_rating}/5` : ""}
               </span>
             </Link>

@@ -19,7 +19,7 @@ Regenerate (app must already be running):
 
 ```bash
 cd scripts && npm install puppeteer-core
-BASE_URL=http://localhost:3001 API_URL=http://localhost:8001 node capture-screenshots.mjs
+BASE_URL=http://localhost:3000 API_URL=http://localhost:8000 node capture-screenshots.mjs
 ```
 
 Do not treat these images as production traffic, live retailer prices, or measured scale.
