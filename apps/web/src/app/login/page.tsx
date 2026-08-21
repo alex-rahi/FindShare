@@ -9,8 +9,8 @@ import { useAuth } from "@/lib/auth";
 export default function LoginPage() {
   const { login } = useAuth();
   const router = useRouter();
-  const [ident, setIdent] = useState("admin");
-  const [password, setPassword] = useState("FindShareAdmin!dev");
+  const [ident, setIdent] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   async function onSubmit(event: FormEvent) {
@@ -37,7 +37,13 @@ export default function LoginPage() {
           placeholder="Email or username"
           className="field"
         />
-        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="field" />
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Password"
+          className="field"
+        />
         <button type="submit" className="btn">
           Sign in
         </button>

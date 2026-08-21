@@ -16,14 +16,13 @@ const CHROME =
   process.env.CHROME_PATH ||
   "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 
-const DESKTOP = { width: 980, height: 900, deviceScaleFactor: 2 };
-const PHONE = { width: 390, height: 844, deviceScaleFactor: 2 };
+const PHONE = { width: 390, height: 844, deviceScaleFactor: 3 };
 
-async function shot(page, name) {
+async function shot(page, name, { fullPage = false } = {}) {
   const path = join(OUT, name);
   await clean(page);
-  await new Promise((r) => setTimeout(r, 250));
-  await page.screenshot({ path, type: "png", fullPage: false });
+  await new Promise((r) => setTimeout(r, 400));
+  await page.screenshot({ path, type: "png", fullPage });
   console.log("wrote", path);
 }
 
@@ -82,21 +81,21 @@ async function main() {
   const browser = await puppeteer.launch({
     executablePath: CHROME,
     headless: true,
-    args: ["--hide-scrollbars", "--disable-gpu"],
+    args: ["--hide-scrollbars", "--disable-gpu", "--font-render-hinting=none"],
   });
 
   try {
     const guest = await browser.newPage();
     guest.setDefaultTimeout(25000);
-
     await guest.setViewport(PHONE);
+
     await goto(guest, "/");
     await waitText(guest, "Quiet enough");
     await shot(guest, "01-feed.png");
 
-    await guest.setViewport(DESKTOP);
     await goto(guest, "/login");
     await waitText(guest, "Sign in");
+    await waitText(guest, "invitation-only");
     await shot(guest, "02-sign-in.png");
 
     await goto(guest, "/register");
@@ -105,21 +104,25 @@ async function main() {
 
     await goto(guest, "/products");
     await waitText(guest, "QuietLine");
+    await waitText(guest, "Northline Studio Yoga Mat");
     await shot(guest, "04-products.png");
 
     await goto(guest, `/products/${productId}`);
     await waitText(guest, "QuietLine Over-Ear Headphones");
-    await shot(guest, "05-product-detail.png");
+    await waitText(guest, "Quiet enough for a noisy office");
+    await shot(guest, "05-product-detail.png", { fullPage: true });
 
     await goto(guest, `/reviews/${reviewId}`);
     await waitText(guest, "Quiet enough for a noisy office");
-    await shot(guest, "06-review.png");
+    await waitText(guest, "Comfortable fit");
+    await shot(guest, "06-review.png", { fullPage: true });
 
     await goto(guest, "/search");
     await waitText(guest, "Search");
     await guest.locator("form input.field").fill("Quiet");
     await guest.locator("form button.btn").click();
     await waitText(guest, "Harbor Audio");
+    await waitText(guest, "Quiet enough");
     await shot(guest, "07-search.png");
     await guest.close();
 
@@ -127,20 +130,24 @@ async function main() {
     signed.setDefaultTimeout(25000);
     await signed.setViewport(PHONE);
     await withToken(signed, token);
+
     await goto(signed, "/");
     await waitText(signed, "Quiet enough");
     await waitText(signed, "Sign out");
     await shot(signed, "08-feed-signed-in.png");
 
-    await signed.setViewport(DESKTOP);
+    await signed.setViewport({ width: 390, height: 1200, deviceScaleFactor: 3 });
     await goto(signed, "/me");
     await waitText(signed, "@demo_reviewer");
     await waitText(signed, "Quiet enough");
+    await waitText(signed, "Unfinished notes");
     await shot(signed, "09-profile.png");
 
+    await signed.setViewport({ width: 390, height: 1400, deviceScaleFactor: 3 });
     await goto(signed, "/reviews/new");
     await waitText(signed, "Write a review");
     await waitText(signed, "@demo_reviewer");
+    await waitText(signed, "Save draft");
     await shot(signed, "10-write-review.png");
     await signed.close();
   } finally {
