@@ -32,8 +32,8 @@ Confirm `GET /api/v1/beta/status` shows `registration_mode=invite_only` and `sea
 | 1–2 | Compose | Four healthy services: web, API, PostgreSQL, Redis. Open `/health` and `/ready`. |
 | 2–3 | Invitation-only access | Register page requires `FINDSHARE-DEV-INVITE`. Mention the 10-user cap and waitlist message when full. |
 | 3–4 | Sign in | `demo_reviewer` / `FindShareDemo!dev`. Point out seeded data is labeled demonstration data. |
-| 4–5 | Feed | Snap feed of **published** reviews only. Toggle For you / Recent. |
-| 5–6 | Catalog | Shop → categories come from the API, not hardcoded UI. Open a fitness/food/beauty product and read the health notice. |
+| 4–5 | Feed | Snap feed of **published** reviews only. Toggle For you / Recent. Screenshot: [screenshots/01-feed.png](screenshots/01-feed.png) |
+| 5–6 | Catalog | Shop → categories come from the API, not hardcoded UI. Open a fitness/food/beauty product and read the health notice. Screenshot: [screenshots/04-products.png](screenshots/04-products.png) |
 | 6–8 | Create + publish | Write a text review (rating, kind, pros/cons). Save draft → it is absent from the feed → Publish → it appears. |
 | 8–9 | Search and profile | Search a product/brand/username. Open a public profile; drafts are not listed. |
 | 9–10 | Authorization | From another account (or curl without the author’s token) a draft returns 404; patching someone else’s review returns 403. Role in a JSON body is ignored. |

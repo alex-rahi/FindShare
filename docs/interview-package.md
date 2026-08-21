@@ -34,6 +34,24 @@ Status labels used in this repo: Implemented, Tested, Deployed, Estimated, Mocke
 5. [data-model.md](data-model.md)
 6. [threat-model.md](threat-model.md)
 7. Running app: http://localhost:3000 (or `:3001` if 3000 is taken)
+8. Screenshots: [screenshots/](screenshots/)
+
+## Screenshots
+
+Captured from the local Compose app. Demonstration seed data, not real products.
+
+| Beat | Screenshot |
+| --- | --- |
+| Published review feed | [01-feed.png](screenshots/01-feed.png) |
+| Invitation-only register | [03-register.png](screenshots/03-register.png) |
+| Sign in | [02-sign-in.png](screenshots/02-sign-in.png) |
+| Shop catalog | [04-products.png](screenshots/04-products.png) |
+| Product + notices | [05-product-detail.png](screenshots/05-product-detail.png) |
+| Published review | [06-review.png](screenshots/06-review.png) |
+| Search | [07-search.png](screenshots/07-search.png) |
+| Signed-in feed | [08-feed-signed-in.png](screenshots/08-feed-signed-in.png) |
+| Profile | [09-profile.png](screenshots/09-profile.png) |
+| Write review (text-only) | [10-write-review.png](screenshots/10-write-review.png) |
 
 ## Local demo credentials (development only)
 

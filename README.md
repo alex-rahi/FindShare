@@ -38,6 +38,28 @@ Seeded local accounts (development only, labeled demonstration data):
 
 Invitation codes are required for new registration. Local development code: `FINDSHARE-DEV-INVITE`.
 
+## Screenshots
+
+Phase 1 local UI. Seeded reviews and products are **demonstration data**, not real purchases.
+
+<p>
+  <img src="docs/screenshots/01-feed.png" alt="Published review feed" width="280" />
+  <img src="docs/screenshots/08-feed-signed-in.png" alt="Signed-in feed" width="280" />
+</p>
+
+| Screen | File |
+| --- | --- |
+| Invitation-only registration | [03-register.png](docs/screenshots/03-register.png) |
+| Sign in | [02-sign-in.png](docs/screenshots/02-sign-in.png) |
+| Shop / catalog | [04-products.png](docs/screenshots/04-products.png) |
+| Product detail | [05-product-detail.png](docs/screenshots/05-product-detail.png) |
+| Published review | [06-review.png](docs/screenshots/06-review.png) |
+| Search | [07-search.png](docs/screenshots/07-search.png) |
+| Profile | [09-profile.png](docs/screenshots/09-profile.png) |
+| Write a text review | [10-write-review.png](docs/screenshots/10-write-review.png) |
+
+Full set: [docs/screenshots/](docs/screenshots/).
+
 ## Notices
 
 Reviews, ratings, product details, prices, and availability may be submitted by users and may contain errors. FindShare does not independently guarantee product quality, safety, authenticity, suitability, or availability. Verify important product information with the manufacturer or retailer before purchasing or using a product.
