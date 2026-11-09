@@ -1,5 +1,7 @@
 # FindShare
 
+Enterprise Java application example
+
 FindShare is an invitation-only social product-discovery platform where users share reviews, ratings, recommendations, images, prices, and shopping information across consumer-product categories. It includes secure media uploads, AI-assisted moderation, human review, and production-style AWS infrastructure managed with Terraform, EKS, Helm, and GitHub Actions.
 
 **Current implementation status:** Phase 1 (local foundation). Later phases are documented, not implemented. See [docs/implementation-plan.md](docs/implementation-plan.md).
